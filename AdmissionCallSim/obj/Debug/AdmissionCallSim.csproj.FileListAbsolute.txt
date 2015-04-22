@@ -1,1 +1,13 @@
 c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\AdmissionCallSim.exe.config
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\AdmissionCallSim.exe
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\AdmissionCallSim.pdb
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\AdmissionCallSim.csprojResolveAssemblyReference.cache
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\MainWindow.baml
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\MainWindow.g.cs
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\App.g.cs
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\AdmissionCallSim_MarkupCompile.cache
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\AdmissionCallSim.g.resources
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\AdmissionCallSim.Properties.Resources.resources
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\AdmissionCallSim.csproj.GenerateResource.Cache
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\AdmissionCallSim.exe
+c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\AdmissionCallSim.pdb
