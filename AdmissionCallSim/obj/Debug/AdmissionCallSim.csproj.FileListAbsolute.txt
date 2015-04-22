@@ -11,3 +11,9 @@ c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCa
 c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\AdmissionCallSim.csproj.GenerateResource.Cache
 c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\AdmissionCallSim.exe
 c:\users\maxf\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\AdmissionCallSim.pdb
+C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\Microsoft.Windows.Shell.dll
+C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\RibbonControlsLibrary.dll
+C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\Microsoft.Windows.Shell.pdb
+C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\Microsoft.Windows.Shell.xml
+C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\RibbonControlsLibrary.pdb
+C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\RibbonControlsLibrary.xml

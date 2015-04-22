@@ -58,11 +58,11 @@ namespace AdmissionCallSim
                 var offset = position - mousePosition;
                 mousePosition = position;
 
-                if (Canvas.GetLeft(draggedImage) + offset.X > 0)
+                if (Canvas.GetLeft(draggedImage) + offset.X + draggedImage.Width < canvas.ActualWidth && Canvas.GetLeft(draggedImage) + offset.X > 0)
                 {
                     Canvas.SetLeft(draggedImage, Canvas.GetLeft(draggedImage) + offset.X);
                 }
-                if (Canvas.GetTop(draggedImage) + offset.Y + draggedImage.Height < canvas.Height && Canvas.GetTop(draggedImage) + offset.Y > 0)
+                if (Canvas.GetTop(draggedImage) + offset.Y + draggedImage.Height < canvas.ActualHeight && Canvas.GetTop(draggedImage) + offset.Y > 0)
                 {
                     Canvas.SetTop(draggedImage, Canvas.GetTop(draggedImage) + offset.Y);
                 }
