@@ -52,11 +52,11 @@
             </Custom:RibbonTab>
         </Custom:Ribbon>
         <Canvas x:Name="canvas" Background="White" Margin="0,137,218,0" MouseLeftButtonDown="Canvas_MouseLeftButtonDown" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseMove="Canvas_MouseMove">
-            <Image Height="80" Canvas.Left="196" Canvas.Top="211" Width="80" Source="Images/phone.png" MaxWidth="80" MaxHeight="80" AllowDrop="True" Focusable="True" Panel.ZIndex="50"/>
             <Canvas Height="300" Canvas.Left="398" Canvas.Top="184" Width="300">
                 <Ellipse Fill="#FFF4F4F5" Stroke="Black" Width="300" Height="300"/>
                 <Image Height="100" Width="100" Source="Images/antena.png" Canvas.Top="96" Canvas.Left="100"/>
             </Canvas>
+            <Image Height="80" Canvas.Left="196" Canvas.Top="211" Width="80" Source="Images/phone.png" MaxWidth="80" MaxHeight="80" AllowDrop="True" Focusable="True" Panel.ZIndex="50"/>
         </Canvas>
 
 
