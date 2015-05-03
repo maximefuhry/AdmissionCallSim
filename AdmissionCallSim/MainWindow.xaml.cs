@@ -20,8 +20,11 @@ namespace AdmissionCallSim
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Image draggedImage;
+        private UserControl draggedImage;
         private Point mousePosition;
+        private int numberOfPhone = 0;
+        private int numberOfAntena = 1;
+        private List<Phone> phoneList = new List<Phone>();
 
         public MainWindow()
         {
@@ -30,8 +33,8 @@ namespace AdmissionCallSim
 
         private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var image = e.Source as Image;
-
+            var image = e.Source as UserControl;
+       
             if (image != null && canvas.CaptureMouse())
             {
                 mousePosition = e.GetPosition(canvas);
@@ -57,6 +60,8 @@ namespace AdmissionCallSim
                 var position = e.GetPosition(canvas);
                 var offset = position - mousePosition;
                 mousePosition = position;
+                //Console.WriteLine(mousePosition.X);
+                //Console.WriteLine(draggedImage.Width);
 
                 if (Canvas.GetLeft(draggedImage) + offset.X + draggedImage.Width < canvas.ActualWidth && Canvas.GetLeft(draggedImage) + offset.X > 0)
                 {
@@ -67,6 +72,16 @@ namespace AdmissionCallSim
                     Canvas.SetTop(draggedImage, Canvas.GetTop(draggedImage) + offset.Y);
                 }
             }
+        }
+
+        private void addPhone(object sender, RoutedEventArgs e)
+        {
+            phoneList.Add(new Phone());
+            numberOfPhone++;
+            canvas.Children.Insert(numberOfAntena, phoneList.Last());
+            Canvas.SetLeft(phoneList.Last(), 0);
+            Canvas.SetTop(phoneList.Last(), 0);
+            Canvas.SetZIndex(phoneList.Last(), 50); 
         }
 
     }
