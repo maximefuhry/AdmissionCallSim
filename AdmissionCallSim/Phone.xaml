@@ -3,11 +3,12 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:System="clr-namespace:System;assembly=mscorlib"
 	mc:Ignorable="d"
 	x:Class="AdmissionCallSim.Phone"
 	x:Name="UserControl" Height="76" Width="78" AllowDrop="True" Focusable="True">
 
-	<Grid x:Name="LayoutRoot">
+	<Grid x:Name="LayoutRoot" MouseRightButtonUp="openPopUp">
 		<Image Source="Images/phone.png" MaxWidth="80" MaxHeight="80" Panel.ZIndex="50" Margin="-1,0,0,0" HorizontalAlignment="Left" Width="80" Height="75" VerticalAlignment="Top"/>
 		<Ellipse Stroke="Black" StrokeThickness="0.6" Margin="0,0,64,62">
 			<Ellipse.Effect>
@@ -20,5 +21,8 @@
 				</LinearGradientBrush>
 			</Ellipse.Fill>
 		</Ellipse>
+		<Popup x:Name="phonePopUp">
+			<Grid Background="#FFE5E5E5" Height="100" Width="100"/>
+		</Popup>
 	</Grid>
 </UserControl>

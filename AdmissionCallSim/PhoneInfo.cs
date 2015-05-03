@@ -11,6 +11,7 @@ namespace AdmissionCallSim
         public int id { set; get; }
         public double x { set; get; }
         public double y { set; get; }
+        public string callType { set; get; }
 
     }
 }
