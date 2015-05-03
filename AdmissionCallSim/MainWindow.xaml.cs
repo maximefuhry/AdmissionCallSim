@@ -39,7 +39,7 @@ namespace AdmissionCallSim
             {
                 mousePosition = e.GetPosition(canvas);
                 draggedImage = image;
-                Panel.SetZIndex(draggedImage, 1); // in case of multiple images
+                Panel.SetZIndex(draggedImage, 2); // in case of multiple images
             }
         }
 
@@ -60,8 +60,6 @@ namespace AdmissionCallSim
                 var position = e.GetPosition(canvas);
                 var offset = position - mousePosition;
                 mousePosition = position;
-                //Console.WriteLine(mousePosition.X);
-                //Console.WriteLine(draggedImage.Width);
 
                 if (Canvas.GetLeft(draggedImage) + offset.X + draggedImage.Width < canvas.ActualWidth && Canvas.GetLeft(draggedImage) + offset.X > 0)
                 {
@@ -81,7 +79,7 @@ namespace AdmissionCallSim
             canvas.Children.Insert(numberOfAntena, phoneList.Last());
             Canvas.SetLeft(phoneList.Last(), 0);
             Canvas.SetTop(phoneList.Last(), 0);
-            Canvas.SetZIndex(phoneList.Last(), 50); 
+            Canvas.SetZIndex(phoneList.Last(), 1); 
         }
 
         private void removePhone(object sender, RoutedEventArgs e)
