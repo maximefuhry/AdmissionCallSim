@@ -27,7 +27,7 @@
 							<ImageBrush ImageSource="Images/plus.png"/>
 						</Custom:RibbonToggleButton.Background>
 					</Custom:RibbonToggleButton>
-					<Custom:RibbonToggleButton Height="45" Width="45" Margin="10,15,10,-10" >
+					<Custom:RibbonToggleButton Height="45" Width="45" Margin="10,15,10,-10" Click="removePhone" >
 						<Custom:RibbonToggleButton.PressedBackground>
 							<ImageBrush ImageSource="Images/minus.png"/>
 						</Custom:RibbonToggleButton.PressedBackground>

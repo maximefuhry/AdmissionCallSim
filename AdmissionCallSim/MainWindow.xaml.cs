@@ -84,5 +84,11 @@ namespace AdmissionCallSim
             Canvas.SetZIndex(phoneList.Last(), 50); 
         }
 
+        private void removePhone(object sender, RoutedEventArgs e)
+        {
+            canvas.Children.Remove(phoneList.Last());
+            phoneList.Remove(phoneList.Last());
+        }
+
     }
 }
