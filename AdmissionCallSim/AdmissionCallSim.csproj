@@ -79,6 +79,7 @@
     <Compile Include="Phone.xaml.cs">
       <DependentUpon>Phone.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PhoneInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

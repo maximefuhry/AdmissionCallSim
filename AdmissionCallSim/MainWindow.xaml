@@ -4,7 +4,11 @@
         xmlns:Custom="http://schemas.microsoft.com/winfx/2006/xaml/presentation/ribbon" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="AdmissionCallSim.MainWindow"
         Title="MainWindow" Height="840" Width="1298">
 	<Grid Background="#FF2C3E50">
-		<Custom:Ribbon VerticalAlignment="Top">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="179*"/>
+			<ColumnDefinition Width="36*"/>
+		</Grid.ColumnDefinitions>
+		<Custom:Ribbon VerticalAlignment="Top" Grid.ColumnSpan="2" Height="138">
 			<Custom:RibbonTab Header="Phone">
 				<Custom:RibbonGroup>
 					<Custom:RibbonGroup.Background>
@@ -49,12 +53,14 @@
 			</Custom:RibbonTab>
 			<Custom:RibbonTab Header="Antena"/>
 		</Custom:Ribbon>
-		<Canvas x:Name="canvas" Background="White" Margin="0,137,218,0" MouseLeftButtonDown="Canvas_MouseLeftButtonDown" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseMove="Canvas_MouseMove">
+		<Canvas x:Name="canvas" Background="White" Margin="0,137,0,0" MouseLeftButtonDown="Canvas_MouseLeftButtonDown" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseMove="Canvas_MouseMove">
 			<Canvas Height="300" Canvas.Left="398" Canvas.Top="184" Width="300">
 				<Ellipse Fill="#FFF4F4F5" Stroke="Black" Width="300" Height="300"/>
 				<Image Height="100" Width="100" Source="Images/antena.png" Canvas.Top="96" Canvas.Left="100"/>
 			</Canvas>
 		</Canvas>
+        <DataGrid x:Name="phoneDataGrid" HorizontalAlignment="Right" Margin="0,137,0,0" VerticalAlignment="Top" Height="672" Width="216" Grid.Column="1" ItemsSource="{Binding Path=., Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}">
+        </DataGrid>
 
 
 

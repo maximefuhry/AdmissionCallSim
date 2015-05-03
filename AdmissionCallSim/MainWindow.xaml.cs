@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Collections.ObjectModel;
 
 namespace AdmissionCallSim
 {
@@ -24,12 +25,15 @@ namespace AdmissionCallSim
         private Point mousePosition;
         private int numberOfPhone = 0;
         private int numberOfAntena = 1;
+        public ObservableCollection<PhoneInfo> phoneInfoList = new ObservableCollection<PhoneInfo>();
         private List<Phone> phoneList = new List<Phone>();
-
+        
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = phoneInfoList;
         }
+
 
         private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -60,33 +64,44 @@ namespace AdmissionCallSim
                 var position = e.GetPosition(canvas);
                 var offset = position - mousePosition;
                 mousePosition = position;
+                
+                Phone currentPhone = draggedImage as Phone;
 
                 if (Canvas.GetLeft(draggedImage) + offset.X + draggedImage.Width < canvas.ActualWidth && Canvas.GetLeft(draggedImage) + offset.X > 0)
                 {
                     Canvas.SetLeft(draggedImage, Canvas.GetLeft(draggedImage) + offset.X);
+                    phoneInfoList[currentPhone.phoneId - 1].x = Canvas.GetLeft(draggedImage) + offset.X;
                 }
                 if (Canvas.GetTop(draggedImage) + offset.Y + draggedImage.Height < canvas.ActualHeight && Canvas.GetTop(draggedImage) + offset.Y > 0)
                 {
                     Canvas.SetTop(draggedImage, Canvas.GetTop(draggedImage) + offset.Y);
+                    phoneInfoList[currentPhone.phoneId - 1].y = Canvas.GetTop(draggedImage) + offset.Y;
                 }
+                phoneDataGrid.Items.Refresh();
             }
         }
 
         private void addPhone(object sender, RoutedEventArgs e)
         {
-            phoneList.Add(new Phone());
-            numberOfPhone++;
+            phoneList.Add(new Phone(++numberOfPhone));
+            phoneInfoList.Add(new PhoneInfo { id = numberOfPhone, x = 0, y = 0 });
+
             canvas.Children.Insert(numberOfAntena, phoneList.Last());
             Canvas.SetLeft(phoneList.Last(), 0);
             Canvas.SetTop(phoneList.Last(), 0);
-            Canvas.SetZIndex(phoneList.Last(), 1); 
+            Canvas.SetZIndex(phoneList.Last(), 1);
+                       
         }
 
         private void removePhone(object sender, RoutedEventArgs e)
         {
             canvas.Children.Remove(phoneList.Last());
             phoneList.Remove(phoneList.Last());
+            phoneInfoList.Remove(phoneInfoList.Last());
+            numberOfPhone--;
         }
 
     }
+
+   
 }

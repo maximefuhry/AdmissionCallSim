@@ -18,9 +18,11 @@ namespace AdmissionCallSim
 	/// </summary>
 	public partial class Phone : UserControl
 	{
-		public Phone()
+        public int phoneId;
+		public Phone(int id)
 		{
 			this.InitializeComponent();
+            this.phoneId = id;
 		}
 	}
 }
