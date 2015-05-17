@@ -8,13 +8,13 @@
 			<ColumnDefinition Width="179*"/>
 			<ColumnDefinition Width="36*"/>
 		</Grid.ColumnDefinitions>
-		<Custom:Ribbon VerticalAlignment="Top" Grid.ColumnSpan="2" Height="138">
+		<Custom:Ribbon VerticalAlignment="Top" Grid.ColumnSpan="2" Height="140">
 			<Custom:RibbonTab Header="Phone">
 				<Custom:RibbonGroup>
 					<Custom:RibbonGroup.Background>
 						<ImageBrush/>
 					</Custom:RibbonGroup.Background>
-					<Custom:RibbonToggleButton Height="45" Width="45" Margin="10,15,10,-10" Click="addPhone" >
+					<Custom:RibbonToggleButton Height="50" Width="45" Margin="10,15,10,-10" Click="addPhone" >
 						<Custom:RibbonToggleButton.PressedBackground>
 							<ImageBrush ImageSource="Images/plus.png"/>
 						</Custom:RibbonToggleButton.PressedBackground>
@@ -31,7 +31,7 @@
 							<ImageBrush ImageSource="Images/plus.png"/>
 						</Custom:RibbonToggleButton.Background>
 					</Custom:RibbonToggleButton>
-					<Custom:RibbonToggleButton Height="45" Width="45" Margin="10,15,10,-10" Click="removePhone" >
+					<Custom:RibbonToggleButton Height="50" Width="45" Margin="10,15,10,-10" Click="removePhone" >
 						<Custom:RibbonToggleButton.PressedBackground>
 							<ImageBrush ImageSource="Images/minus.png"/>
 						</Custom:RibbonToggleButton.PressedBackground>
@@ -49,14 +49,17 @@
 						</Custom:RibbonToggleButton.Background>
 					</Custom:RibbonToggleButton>
 				</Custom:RibbonGroup>
-                
+				<Custom:RibbonGroup>
+					<Label x:Name="lbl_call_status" Content="" VerticalAlignment="Top" Height="74" Width="350" RenderTransformOrigin="0.504,0.535"/>
+				</Custom:RibbonGroup>
+				
 			</Custom:RibbonTab>
 			<Custom:RibbonTab Header="Antena"/>
 		</Custom:Ribbon>
-		<Canvas x:Name="canvas" Background="White" Margin="0,137,0,0" MouseLeftButtonDown="Canvas_MouseLeftButtonDown" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseMove="Canvas_MouseMove">
-			<Canvas Height="300" Canvas.Left="398" Canvas.Top="184" Width="300">
+		<Canvas x:Name="canvas" Background="White" Margin="-5,127,5,10" MouseLeftButtonDown="Canvas_MouseLeftButtonDown" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseMove="Canvas_MouseMove">
+			<Canvas Height="300" Canvas.Left="400" Canvas.Top="200" Width="300">
 				<Ellipse Fill="#FFF4F4F5" Stroke="Black" Width="300" Height="300"/>
-				<Image Height="100" Width="100" Source="Images/antena.png" Canvas.Top="96" Canvas.Left="100"/>
+				<Image Height="100" Width="100" Source="Images/antena.png" Canvas.Top="98" Canvas.Left="100"/>
 			</Canvas>
 		</Canvas>
         <DataGrid x:Name="phoneDataGrid" HorizontalAlignment="Right" Margin="0,137,0,0" VerticalAlignment="Top" Height="672" Width="216" Grid.Column="1" ItemsSource="{Binding Path=., Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}">

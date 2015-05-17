@@ -61,9 +61,13 @@
     <Compile Include="SimCore\Antenna.cs" />
     <Compile Include="SimCore\AUSimulator.cs" />
     <Compile Include="SimCore\CallResult.cs" />
-    <Compile Include="SimCore\CallType.cs" />
+    <Compile Include="SimCore\Call.cs" />
     <Compile Include="SimCore\Cell.cs" />
     <Compile Include="SimCore\Mobile.cs" />
+    <Compile Include="SimCore\Mobile.xaml.cs">
+      <DependentUpon>Mobile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SimCore\UMTSCode.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -79,6 +83,10 @@
     <Page Include="Phone.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SimCore\Mobile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
