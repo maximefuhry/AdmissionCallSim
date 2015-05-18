@@ -10,7 +10,7 @@ namespace AdmissionCallSim.SimCore
 	{
 		public enum Type
 		{
-			NONE,
+			NONE = 0,
 			VOICE,
 			DATA_BAND_L,
 			DATA_BAND_H,

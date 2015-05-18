@@ -78,18 +78,13 @@ namespace AdmissionCallSim.SimCore
 			MenuItem mi = sender as MenuItem;
 			MessageBox.Show(mi.Header.ToString());
 			if(mi.Header.Equals(Call.Type.VOICE.ToString())){
-				int call_result  = startCall(Call.Type.VOICE, 50);
-				if(call_result < 0)
+				CallResult call_result  = startCall(Call.Type.VOICE, 50);
+				switch(call_result)
 				{
-					MessageBox.Show("Call rejected");
-				}
-				else if (call_result == 0)
-				{
-					MessageBox.Show("Call pending");
-				}
-				else if (call_result > 0) 
-				{
-					MessageBox.Show("Call accepted");
+					case CallResult.FAILURE: MessageBox.Show("Call rejected"); break;
+					case CallResult.PENDING: MessageBox.Show("Call pending"); break;
+					case CallResult.SUCCESS: MessageBox.Show("Call accepted"); break;
+					default: break;
 				}
 			}
 			else if (mi.Header.Equals(Call.Type.DATA_BAND_L.ToString()))
@@ -108,6 +103,13 @@ namespace AdmissionCallSim.SimCore
 			{
 				MessageBox.Show("UNKNOWN");
 			}
+		}
+
+		private void test(object sender, EventArgs e)
+		{
+			AUSimulator simulator = AUSimulator.getInstance();
+			simulator.addMobile(this);
+			//simulator.provokeRandomCalls();  => Is now private
 		}
 	}
 }

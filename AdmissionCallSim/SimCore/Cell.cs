@@ -33,11 +33,11 @@ namespace AdmissionCallSim.SimCore
 		}
 
 		// This list is represent all pending mobiles, with remaining time associated
-		private Dictionary<Mobile, Int32> _pendingMobiles;
-		public Dictionary<Mobile, Int32> PendingMobiles
-		{
-			get { return _pendingMobiles; }
-		}
+		//private Dictionary<Mobile, Int32> _pendingMobiles;
+		//public Dictionary<Mobile, Int32> PendingMobiles
+		//{
+		//	get { return _pendingMobiles; }
+		//}
 
 		// array storing the UMTS codes under the form <Size, Number>
 		private Dictionary<Int32, Int32> _codesArray;
@@ -56,7 +56,7 @@ namespace AdmissionCallSim.SimCore
 		{
 			_antenna = new Antenna(x,y);
 			_frequency = frequency;
-			_pendingMobiles = new Dictionary<Mobile, Int32>();
+			//_pendingMobiles = new Dictionary<Mobile, Int32>();
 			_callingMobiles = new Dictionary<Mobile,Tuple<Double,Double>>();
 			_codesArray = new Dictionary<Int32, Int32>(){
 				{1,1},
@@ -68,9 +68,9 @@ namespace AdmissionCallSim.SimCore
 		// This method checks if the cell is able to accept the new call
 		// if it is, then we wait for a code to be available
  		// and return it to the mobile
-		public Int32 requestCall(Mobile m, Call.Type type)
+		public CallResult requestCall(Mobile m, Call.Type type)
 		{
-			Int32 code = (Int32) CallResult.FAILURE;
+			CallResult code = CallResult.FAILURE;
 
 			Double receivedPower = frissPower(m);
 
@@ -86,7 +86,7 @@ namespace AdmissionCallSim.SimCore
 				if (_codesArray[1] > 0)
 				{
 					// There is some codes left, decrement it
-					code = 1;
+					code = CallResult.SUCCESS;
 					_codesArray[1]--;
 					// update SIR and power used
 					_antenna.CurrentPower += receivedPower;
@@ -94,9 +94,9 @@ namespace AdmissionCallSim.SimCore
 				}
 				else
 				{
-					// There is none, transmit a result to the simulator 
+					// There is no code left, transmit a result to the simulator 
 					// that it should check next iterations if there are some free codes 
-					code = (Int32) CallResult.PENDING;
+					code = CallResult.PENDING;
 				}
 
 			}
@@ -111,9 +111,10 @@ namespace AdmissionCallSim.SimCore
 			return power;
 		}
 
-		public Int32 endCall(Mobile m, Call.Type type)
+		public void endCall(Mobile m, Call.Type type)
 		{
-			return 0;
+			_cellInterference -= _callingMobiles[m].Item1;
+			_callingMobiles.Remove(m);
 		}
 
 		private Boolean doAdmissionControl(Double receivedPower, Double SIR, Call.Type type)

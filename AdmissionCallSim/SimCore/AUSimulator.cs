@@ -7,20 +7,29 @@ using System.Threading.Tasks;
 
 namespace AdmissionCallSim.SimCore
 {
-    class AUSimulator
+    public class AUSimulator
     {
 		private static List<Cell> _cells;
 
 		// List for waiting mobiles, with timeout value
 		private static Dictionary<Mobile, Int32> _pendingMobiles;
 
-		private static Int32 _codeWaitTimeout = 100;
+		private static Int32 _codeWaitTimeout;
 
 		private static List<Mobile> _callingMobiles;
 
 		private static List<Mobile> _idleMobiles;
 
-		private static AUSimulator _instance = null;
+		private static AUSimulator _instance;
+		
+		private static readonly Double _callingThresold = 0.2;
+
+		private static Boolean _running;
+		public static Boolean Running
+		{
+			get { return _running; }
+			set { _running = value; }
+		}
 
 		private AUSimulator()
 		{
@@ -28,7 +37,7 @@ namespace AdmissionCallSim.SimCore
 			_callingMobiles = new List<Mobile>();
 			_idleMobiles = new List<Mobile>();
 			_pendingMobiles = new Dictionary<Mobile, int>();
-
+			_codeWaitTimeout = 100;
 		}
 
 		public static AUSimulator getInstance()
@@ -48,14 +57,28 @@ namespace AdmissionCallSim.SimCore
 
 		public void removeMobile(Mobile m)
 		{
-			if (_callingMobiles.Contains(m))
+			if (_callingMobiles.Contains(m) || _pendingMobiles.ContainsKey(m))
 			{
 				throw new Exception("Le mobile ne peut pas être supprimé en cours d'appel");
 			}
-			if (_idleMobiles.Contains(m))
+			else if (_idleMobiles.Contains(m))
 			{
 				_idleMobiles.Remove(m);
 			}
+		}
+
+		public void addCell(Cell c)
+		{
+			_cells.Add(c);
+		}
+
+		public void removeCell(Cell c)
+		{
+			if (c.CallingMobiles.Count != 0)
+			{
+				throw new Exception("Cell must be unused before deletion");
+			}
+			_cells.Remove(c);
 		}
 
 		private void runCalls(){
@@ -96,41 +119,88 @@ namespace AdmissionCallSim.SimCore
 			mobile.NearestCell = nearestCell;
 		}
 
-		// Method used to check every step
-		// of the simulation the pending mobiles
-		private void updateCodes()
+		private void provokeRandomCalls()
 		{
-			foreach (Cell c in _cells)
+			Random RNG = new Random(DateTime.Now.Millisecond);
+			foreach (Mobile m in _idleMobiles)
 			{
-				Dictionary<Mobile, Int32> pendingmobiles = c.PendingMobiles;
-				foreach (Mobile m in pendingmobiles.Keys)
+				if (RNG.NextDouble() <= _callingThresold)
 				{
-					Int32 position;
-					Debug.Assert(c.CallingMobiles.ContainsKey(m));
-					Debug.Assert(_idleMobiles.Contains(m));
-
-					if (c.Dummy.requireCode(Call.getCallInfos()[m.Type].Item3, out position))
+					Int32 rndCallLength = RNG.Next(_codeWaitTimeout - _codeWaitTimeout / 2, _codeWaitTimeout + _codeWaitTimeout / 2);
+					CallResult result = m.startCall((Call.Type) RNG.Next(1, 4), rndCallLength);
+					switch (result)
 					{
-						// TODO update Cell interference with current mobile required power.
-						c.PendingMobiles.Remove(m);
-						_idleMobiles.Remove(m);
-						_callingMobiles.Add(m);
-					}
-					else
-					{
-						c.PendingMobiles[m]--;
-						if (c.PendingMobiles[m] <= 0)
-						{
-							// Time-out expired
-							c.PendingMobiles.Remove(m);
-
-							// Set call length to 0 and close connection
-							m.CallLength = 0;
-							m.endCall();
-						}
+						case CallResult.PENDING:
+							_idleMobiles.Remove(m);
+							_pendingMobiles.Add(m, _codeWaitTimeout);
+							break;
+						case CallResult.SUCCESS:
+							_idleMobiles.Remove(m);
+							_callingMobiles.Add(m);
+							break;
+						case CallResult.FAILURE:
+						default:
+							break;
 					}
 				}
 			}
 		}
+
+		// Method used to check every step
+		// of the simulation the pending mobiles
+		private void updateCodes()
+		{
+			//Dictionary<Mobile, Int32> pendingmobiles = c.PendingMobiles;
+			foreach (Mobile m in _pendingMobiles.Keys)
+			{
+				Int32 position;
+				Cell c = m.NearestCell;
+
+				Debug.Assert(c.CallingMobiles.ContainsKey(m));
+
+				if (c.Dummy.requireCode(Call.getCallInfos()[m.Type].Item3, out position))
+				{
+					// TODO update Cell interference with current mobile required power.
+					//c.PendingMobiles.Remove(m);
+					_pendingMobiles.Remove(m);
+					_callingMobiles.Add(m);
+				}
+				else
+				{
+					_pendingMobiles[m]--;
+					if (_pendingMobiles[m] <= 0)
+					{
+						// Time-out expired
+						c.CallingMobiles.Remove(m);
+
+						// Set call length to 0 and close connection
+						m.CallLength = 0;
+						m.endCall();
+					}
+				}
+			}
+		}
+
+		public void run()
+		{	
+			while(_running)
+			{
+				runCalls();
+				updateCodes();
+				provokeRandomCalls();
+			}
+			
+			// Model safety : all calling mobiles (triggered by simulator or GUI) 
+			// should end call before thread returns ?????
+
+			//foreach (Mobile m in _callingMobiles)
+			//{
+			//	m.CallLength = 0;
+			//	m.endCall();
+			//	_callingMobiles.Remove(m);
+			//	_idleMobiles.Add(m);
+			//}
+		}
+
     }
 }
