@@ -43,7 +43,7 @@ namespace AdmissionCallSim.SimCore
 		private Dictionary<Int32, Int32> _codesArray;
 
 		// To replace _codeArray short to mid-term;
-		public UMTSCode Dummy;
+		public UMTSCode UMTSCodes { get; set; }
 
 		public Cell(Int32 frequency) : 
 			this(frequency, 0, 0)

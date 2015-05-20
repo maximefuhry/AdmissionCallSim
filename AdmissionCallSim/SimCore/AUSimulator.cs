@@ -36,8 +36,9 @@ namespace AdmissionCallSim.SimCore
 			_cells = new List<Cell>();
 			_callingMobiles = new List<Mobile>();
 			_idleMobiles = new List<Mobile>();
-			_pendingMobiles = new Dictionary<Mobile, int>();
+			_pendingMobiles = new Dictionary<Mobile, Int32>();
 			_codeWaitTimeout = 100;
+			_running = true;
 		}
 
 		public static AUSimulator getInstance()
@@ -94,6 +95,7 @@ namespace AdmissionCallSim.SimCore
 		}
 
 		public static Double getOtherCellsInterferences(Cell calling){
+			Debug.Assert(!Object.ReferenceEquals(_instance, null));
 			Double interference = 0;
 			//foreach (Cell cell in _cells)
 			//{
@@ -126,7 +128,7 @@ namespace AdmissionCallSim.SimCore
 			{
 				if (RNG.NextDouble() <= _callingThresold)
 				{
-					Int32 rndCallLength = RNG.Next(_codeWaitTimeout - _codeWaitTimeout / 2, _codeWaitTimeout + _codeWaitTimeout / 2);
+					Int32 rndCallLength = RNG.Next(_codeWaitTimeout - (_codeWaitTimeout / 4), _codeWaitTimeout + (_codeWaitTimeout / 4));
 					CallResult result = m.startCall((Call.Type) RNG.Next(1, 4), rndCallLength);
 					switch (result)
 					{
@@ -148,7 +150,7 @@ namespace AdmissionCallSim.SimCore
 
 		// Method used to check every step
 		// of the simulation the pending mobiles
-		private void updateCodes()
+		private void updatePending()
 		{
 			//Dictionary<Mobile, Int32> pendingmobiles = c.PendingMobiles;
 			foreach (Mobile m in _pendingMobiles.Keys)
@@ -158,7 +160,7 @@ namespace AdmissionCallSim.SimCore
 
 				Debug.Assert(c.CallingMobiles.ContainsKey(m));
 
-				if (c.Dummy.requireCode(Call.getCallInfos()[m.Type].Item3, out position))
+				if (c.UMTSCodes.requireCode(Call.getCallInfos()[m.Type].Item3, out position))
 				{
 					// TODO update Cell interference with current mobile required power.
 					//c.PendingMobiles.Remove(m);
@@ -181,13 +183,39 @@ namespace AdmissionCallSim.SimCore
 			}
 		}
 
-		public void run()
-		{	
+		public void startMobileCall(Mobile m)
+		{
+			Debug.Assert(_idleMobiles.Contains(m));
+
+			Random RNG = new Random(DateTime.Now.Millisecond);
+			Int32 callLen = RNG.Next(_codeWaitTimeout - (_codeWaitTimeout / 4), _codeWaitTimeout + (_codeWaitTimeout / 4));
+			CallResult res = m.startCall((Call.Type)RNG.Next(1, 4), callLen);
+			switch (res)
+			{
+				case CallResult.PENDING:
+					_idleMobiles.Remove(m);
+					_pendingMobiles.Add(m, _codeWaitTimeout);
+					break;
+				case CallResult.SUCCESS:
+					_idleMobiles.Remove(m);
+					_callingMobiles.Add(m);
+					break;
+				case CallResult.FAILURE:
+				default:
+					break;
+
+			}
+		}
+
+		public static void run()
+		{
+			Debug.Assert(!Object.ReferenceEquals(_instance, null));
+
 			while(_running)
 			{
-				runCalls();
-				updateCodes();
-				provokeRandomCalls();
+				_instance.runCalls();
+				_instance.updatePending();
+				_instance.provokeRandomCalls();
 			}
 			
 			// Model safety : all calling mobiles (triggered by simulator or GUI) 
