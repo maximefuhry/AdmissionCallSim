@@ -58,6 +58,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SimCore\Antenna.cs" />
+    <Compile Include="SimCore\AUSimulator.cs" />
+    <Compile Include="SimCore\CallResult.cs" />
+    <Compile Include="SimCore\CallType.cs" />
+    <Compile Include="SimCore\Cell.cs" />
+    <Compile Include="SimCore\Mobile.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
