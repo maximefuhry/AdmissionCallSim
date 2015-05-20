@@ -19,3 +19,12 @@ C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCa
 C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\RibbonControlsLibrary.xml
 C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\phone.baml
 C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\phone.g.cs
+C:\Users\foobar\Documents\UTBM\RE56\project\AdmissionCallSim\bin\Debug\AdmissionCallSim.exe.config
+C:\Users\foobar\Documents\UTBM\RE56\project\AdmissionCallSim\obj\Debug\AdmissionCallSim.exe
+C:\Users\foobar\Documents\UTBM\RE56\project\AdmissionCallSim\obj\Debug\AdmissionCallSim.pdb
+C:\Users\MaxF\Documents\Visual Studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\AdmissionCallSim.exe.CodeAnalysisLog.xml
+C:\Users\MaxF\Documents\Visual Studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\bin\Debug\AdmissionCallSim.exe.lastcodeanalysissucceeded
+C:\Users\MaxF\Documents\Visual Studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\SimCore\Mobile.baml
+C:\Users\MaxF\Documents\Visual Studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\Simple Styles.baml
+C:\Users\MaxF\Documents\Visual Studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\App.baml
+C:\Users\MaxF\Documents\Visual Studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\SimCore\Mobile.g.cs

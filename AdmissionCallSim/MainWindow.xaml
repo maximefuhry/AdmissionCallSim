@@ -3,64 +3,95 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Custom="http://schemas.microsoft.com/winfx/2006/xaml/presentation/ribbon" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="AdmissionCallSim.MainWindow"
         Title="MainWindow" Height="840" Width="1298">
+	
 	<Grid Background="#FF2C3E50">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="139*"/>
+			<RowDefinition Height="670*"/>
+		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="179*"/>
 			<ColumnDefinition Width="36*"/>
 		</Grid.ColumnDefinitions>
-		<Custom:Ribbon VerticalAlignment="Top" Grid.ColumnSpan="2" Height="138">
-			<Custom:RibbonTab Header="Phone">
-				<Custom:RibbonGroup>
-					<Custom:RibbonGroup.Background>
-						<ImageBrush/>
-					</Custom:RibbonGroup.Background>
-					<Custom:RibbonToggleButton Height="45" Width="45" Margin="10,15,10,-10" Click="addPhone" >
-						<Custom:RibbonToggleButton.PressedBackground>
-							<ImageBrush ImageSource="Images/plus.png"/>
-						</Custom:RibbonToggleButton.PressedBackground>
-						<Custom:RibbonToggleButton.CheckedBackground>
-							<ImageBrush ImageSource="Images/plus.png"/>
-						</Custom:RibbonToggleButton.CheckedBackground>
-						<Custom:RibbonToggleButton.FocusedBackground>
-							<ImageBrush ImageSource="Images/plus.png"/>
-						</Custom:RibbonToggleButton.FocusedBackground>
-						<Custom:RibbonToggleButton.MouseOverBackground>
-							<ImageBrush ImageSource="Images/plus.png"/>
-						</Custom:RibbonToggleButton.MouseOverBackground>
-						<Custom:RibbonToggleButton.Background>
-							<ImageBrush ImageSource="Images/plus.png"/>
-						</Custom:RibbonToggleButton.Background>
-					</Custom:RibbonToggleButton>
-					<Custom:RibbonToggleButton Height="45" Width="45" Margin="10,15,10,-10" Click="removePhone" >
-						<Custom:RibbonToggleButton.PressedBackground>
-							<ImageBrush ImageSource="Images/minus.png"/>
-						</Custom:RibbonToggleButton.PressedBackground>
-						<Custom:RibbonToggleButton.MouseOverBackground>
-							<ImageBrush ImageSource="Images/minus.png"/>
-						</Custom:RibbonToggleButton.MouseOverBackground>
-						<Custom:RibbonToggleButton.FocusedBackground>
-							<ImageBrush ImageSource="Images/minus.png"/>
-						</Custom:RibbonToggleButton.FocusedBackground>
-						<Custom:RibbonToggleButton.CheckedBackground>
-							<ImageBrush ImageSource="Images/minus.png"/>
-						</Custom:RibbonToggleButton.CheckedBackground>
-						<Custom:RibbonToggleButton.Background>
-							<ImageBrush ImageSource="Images/minus.png"/>
-						</Custom:RibbonToggleButton.Background>
-					</Custom:RibbonToggleButton>
-				</Custom:RibbonGroup>
-                
-			</Custom:RibbonTab>
-			<Custom:RibbonTab Header="Antena"/>
-		</Custom:Ribbon>
-		<Canvas x:Name="canvas" Background="White" Margin="0,137,0,0" MouseLeftButtonDown="Canvas_MouseLeftButtonDown" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseMove="Canvas_MouseMove">
-			<Canvas Height="300" Canvas.Left="398" Canvas.Top="184" Width="300">
+		<Button Margin="139.5,33.926,849,31.426" BorderBrush="#00707070" Click="addPhone" >
+			<Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Background">
+						<Setter.Value>
+							<ImageBrush ImageSource="white-plus-md.png"/>
+						</Setter.Value>
+					</Setter>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background">
+								<Setter.Value>
+									<ImageBrush ImageSource="white-plus-md.png" Opacity="0.4"/>
+								</Setter.Value>
+							</Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+		</Button>
+		<Button Margin="264,33.926,724.5,31.426" BorderBrush="#00707070" Click="removePhone">
+			<Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Background">
+						<Setter.Value>
+							<ImageBrush ImageSource="minus-2-256.png"/>
+						</Setter.Value>
+					</Setter>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background">
+								<Setter.Value>
+									<ImageBrush ImageSource="minus-2-256.png" Opacity="0.4"/>
+								</Setter.Value>
+							</Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+		</Button>
+		
+		<TextBox Margin="706.5,50.7,145.5,49.927" FontSize="21.333"></TextBox>
+		<Canvas x:Name="canvas" Background="White" MouseLeftButtonDown="Canvas_MouseLeftButtonDown" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseMove="Canvas_MouseMove" Grid.Row="1">
+			<Canvas Height="300" Canvas.Left="400" Canvas.Top="200" Width="300">
 				<Ellipse Fill="#FFF4F4F5" Stroke="Black" Width="300" Height="300"/>
-				<Image Height="100" Width="100" Source="Images/antena.png" Canvas.Top="96" Canvas.Left="100"/>
+				<Image Height="100" Width="100" Source="Images/antena.png" Canvas.Top="98" Canvas.Left="100"/>
 			</Canvas>
 		</Canvas>
-        <DataGrid x:Name="phoneDataGrid" HorizontalAlignment="Right" Margin="0,137,0,0" VerticalAlignment="Top" Height="672" Width="216" Grid.Column="1" ItemsSource="{Binding Path=., Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}">
+        <DataGrid x:Name="phoneDataGrid" HorizontalAlignment="Right" VerticalAlignment="Top" Height="670" Width="216" Grid.Column="1" ItemsSource="{Binding Path=., Mode=TwoWay, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1">
+            <!--DataGrid.Columns>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <ListBox ItemsSource="{Binding calltype}" Width="100" Height="20"></ListBox>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+            </-->
         </DataGrid>
+        <Label Content="Antena power (W) :" HorizontalAlignment="Left" Margin="492.833,50.7,0,0" VerticalAlignment="Top" Width="195.667" FontSize="21.333" Foreground="White"/>
+        <Label Content="Mobile :" HorizontalAlignment="Left" Margin="19,50.7,0,0" VerticalAlignment="Top" Width="104.167" FontSize="21.333" Foreground="White"/>
 
 
 

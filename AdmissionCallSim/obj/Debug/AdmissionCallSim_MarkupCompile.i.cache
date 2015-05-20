@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\
+C:\Users\MaxF\Documents\Visual Studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\obj\Debug\
 AdmissionCallSim
 none
 false
-DEBUG;TRACE
-C:\Users\MaxF\documents\visual studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\App.xaml
-2-1947960621
+CODE_ANALYSIS;DEBUG;TRACE
+C:\Users\MaxF\Documents\Visual Studio 2013\Projects\AdmissionCallSim\AdmissionCallSim\App.xaml
+41573537241
 
-17-800527642
+19-835066129
 16537862915
-MainWindow.xaml;Phone.xaml;
+MainWindow.xaml;Phone.xaml;SimCore\Mobile.xaml;Simple Styles.xaml;
 
 False
 

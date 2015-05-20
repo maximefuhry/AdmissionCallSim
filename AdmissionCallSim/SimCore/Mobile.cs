@@ -6,9 +6,16 @@ using System.Threading.Tasks;
 
 namespace AdmissionCallSim.SimCore
 {
-	class Mobile
+	public partial class Mobile
 	{
-		private static Int32 _id = 0;
+		private static Int32 _nbrmobiles = 0;
+
+		private Int32 _id;
+		public Int32 ID
+		{
+			get { return _id; }
+			set { _id = value; }
+		}
 
 		// Emitted power
 		private Double _Pe;
@@ -22,7 +29,7 @@ namespace AdmissionCallSim.SimCore
 		private Int32 _x;
 		public Int32 X
 		{
-			get { return X; }
+			get { return _x; }
 			set { _x = value; }
 		}
 
@@ -33,7 +40,12 @@ namespace AdmissionCallSim.SimCore
 			set { _y = value; }
 		}
 
-		private Int32 _callduration = 0;
+		private Int32 _calllength = 0;
+		public Int32 CallLength
+		{
+			get { return _calllength; }
+			set { _calllength = value; }
+		}
 
 		private Cell _nearestCell = null;
 		public Cell NearestCell
@@ -42,47 +54,40 @@ namespace AdmissionCallSim.SimCore
 			set { _nearestCell = value; }
 		}
 
-		private CallType.Type _type;
-
-		public Mobile() : this(0,0)
+		private Call.Type _type;
+		public Call.Type Type
 		{
-
+			get { return _type; }
+		//	set { _type = value; }
 		}
 
-		public Mobile(Int32 x, Int32 y)
+		public static Int32 getNbrMobiles()
 		{
-			_x = x;
-			_y = y;
-			_Pe = _default_Pe;
-			_type = CallType.Type.NONE;
-			_id++;
+			return _nbrmobiles;
 		}
 
-		public Int32 getDuration()
+		public CallResult startCall(Call.Type t, Int32 length)
 		{
-			return _callduration;
-		}
-
-		public Int32 startCall(CallType.Type type, Int32 duration)
-		{
-			Int32 result = _nearestCell.requestCall(this, type);
-			if (result != (Int32) CallResult.FAILURE)
+			CallResult result = _nearestCell.requestCall(this, t);
+			if (result != CallResult.FAILURE)
 			{
 				// call request succeded
-				_callduration = duration;
-				_type = type;
+				_calllength = length;
+				_type = t;
 			}
 			return result;
 		}
 
 		public void runCall()
 		{
-			_callduration--;
+			_calllength--;
 		}
 
 		public void endCall()
 		{
 			_nearestCell.endCall(this, _type);
+			// Call length is already 0 if we step into here
+			_type = Call.Type.NONE;
 		}
 	}
 }

@@ -7,7 +7,7 @@ using System.Drawing;
 
 namespace AdmissionCallSim.SimCore
 {
-	class Antenna
+	public class Antenna
 	{
 		private Double _maxPower;
 		public Double MaxPower
