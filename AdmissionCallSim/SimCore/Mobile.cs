@@ -68,14 +68,15 @@ namespace AdmissionCallSim.SimCore
 
 		public CallResult startCall(Call.Type t, Int32 length)
 		{
-			CallResult result = _nearestCell.requestCall(this, t);
-			if (result != CallResult.FAILURE)
-			{
-				// call request succeded
-				_calllength = length;
-				_type = t;
-			}
-			return result;
+			//CallResult result = _nearestCell.requestCall(this, t);
+			//if (result != CallResult.FAILURE)
+			//{
+			//	// call request succeded
+			//	_calllength = length;
+			//	_type = t;
+			//}
+			//return result;
+			return CallResult.FAILURE;
 		}
 
 		public void runCall()

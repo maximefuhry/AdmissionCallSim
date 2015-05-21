@@ -79,6 +79,7 @@
     <Compile Include="SimCore\CallResult.cs" />
     <Compile Include="SimCore\Call.cs" />
     <Compile Include="SimCore\Cell.cs" />
+    <Compile Include="SimCore\Converter.cs" />
     <Compile Include="SimCore\Mobile.cs" />
     <Compile Include="SimCore\Mobile.xaml.cs">
       <DependentUpon>Mobile.xaml</DependentUpon>
