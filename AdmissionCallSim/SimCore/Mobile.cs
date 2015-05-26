@@ -8,87 +8,75 @@ namespace AdmissionCallSim.SimCore
 {
 	public partial class Mobile
 	{
-		private static Int32 _nbrmobiles = 0;
+		public static Int32 Nbrmobiles { get; set;}
 
-		private Int32 _id;
-		public Int32 ID
-		{
-			get { return _id; }
-			set { _id = value; }
-		}
+		public Int32 ID { get; set; }
 
 		// Emitted power
-		private Double _Pe;
-		public Double PE
-		{
-			get { return _Pe; }
-		}
+		public MobileClass Class { get; set; }
 
-		private Double _default_Pe = 40;
+		public Double Gain { get; set; }
 
-		private Int32 _x;
-		public Int32 X
-		{
-			get { return _x; }
-			set { _x = value; }
-		}
+		public Double Loss { get; set; }
 
-		private Int32 _y;
-		public Int32 Y
-		{
-			get { return _y; }
-			set { _y = value; }
-		}
+		public Int32 X { get; set; }
 
-		private Int32 _calllength = 0;
-		public Int32 CallLength
-		{
-			get { return _calllength; }
-			set { _calllength = value; }
-		}
+		public Int32 Y { get; set; }
 
-		private Cell _nearestCell = null;
-		public Cell NearestCell
-		{
-			get { return _nearestCell; }
-			set { _nearestCell = value; }
-		}
+		// the distance with the BS
+		public Double Distance { get; set; }
 
-		private Call.Type _type;
-		public Call.Type Type
-		{
-			get { return _type; }
-		//	set { _type = value; }
-		}
+		public Int32 CallLength { get; set; }
 
-		public static Int32 getNbrMobiles()
-		{
-			return _nbrmobiles;
-		}
+		public Cell NearestCell { get; set; }
+
+		public Call.Type Type { get; set; }
 
 		public CallResult startCall(Call.Type t, Int32 length)
 		{
 			//CallResult result = _nearestCell.requestCall(this, t);
-			//if (result != CallResult.FAILURE)
-			//{
-			//	// call request succeded
-			//	_calllength = length;
-			//	_type = t;
-			//}
-			//return result;
-			return CallResult.FAILURE;
+			CallResult result = CallResult.FAILURE;
+			if (result != CallResult.FAILURE)
+			{
+				// call request succeded
+				CallLength = length;
+				Type = t;
+			}
+			return result;
 		}
 
 		public void runCall()
 		{
-			_calllength--;
+			CallLength--;
 		}
 
 		public void endCall()
 		{
-			_nearestCell.endCall(this, _type);
+			NearestCell.endCall(this, Type);
 			// Call length is already 0 if we step into here
-			_type = Call.Type.NONE;
+			Type = Call.Type.NONE;
 		}
+
+		public static Double getPower(MobileClass mobileClass)
+		{
+			switch (mobileClass)
+			{
+				case MobileClass.LOW:
+					return 0;
+				case MobileClass.HIGH:
+					return 0;
+				case MobileClass.MEDIUM:
+					return 0;
+				default:
+					return Double.MinValue;
+			}
+		}
+	}
+
+	public enum MobileClass
+	{
+		LOW,
+		MEDIUM,
+		HIGH
 	}
 }

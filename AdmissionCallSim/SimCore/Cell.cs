@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,126 +9,123 @@ namespace AdmissionCallSim.SimCore
 {
 	public class Cell
 	{
-		private static readonly Int32 _thermalNoise = -90;
+		private static Double _thermalNoise;
 	
 		private Int32 _frequency;
 
-		private Double _cellInterference = 0;
+		private Int32 _defaultFrequency = 2100;
 
-		private readonly Double _umtsBandwidth = 3840000;
+		//private Double _cellInterference;
 
+		//private readonly Double _umtsBandwidth = 3840000;
 
-		private Antenna _antenna;
-		public Antenna Antenna
-		{
-			get { return _antenna; }
-		}
+		private static Double _c;
+
+		public Antenna Antenna { get; set; }
+
 
 		// This list is representing 
 		// ALL MOBILES CURRENTLY USING THIS CELL'S ANTENNA
-		// with the power and the SIR consumed associated to free ressources
-		private Dictionary<Mobile, Tuple<Double,Double>> _callingMobiles;
-		public Dictionary<Mobile, Tuple<Double, Double>> CallingMobiles
-		{
-			get { return _callingMobiles; }
-		}
+		// with the power required, the code length & position
+		public Dictionary<Mobile, Tuple<Double, Int32, Int32>> CallingMobiles { get; private set; }
 
-		// This list is represent all pending mobiles, with remaining time associated
-		//private Dictionary<Mobile, Int32> _pendingMobiles;
-		//public Dictionary<Mobile, Int32> PendingMobiles
-		//{
-		//	get { return _pendingMobiles; }
-		//}
-
-		// array storing the UMTS codes under the form <Size, Number>
-		private Dictionary<Int32, Int32> _codesArray;
+		// List of pending mobiles with power required
+		public Dictionary<Mobile, Double> PendingMobiles { get; set; }
 
 		// To replace _codeArray short to mid-term;
 		public UMTSCode UMTSCodes { get; set; }
 
-		public Cell(Int32 frequency) : 
-			this(frequency, 0, 0)
+		public Cell() : 
+			this(0, 0)
 		{
 
 		}
 
-		// Constructors
-		public Cell(Int32 frequency, Int32 x, Int32 y)
+		// Constructorss
+		public Cell(Int32 x, Int32 y)
 		{
-			_antenna = new Antenna(x,y);
-			_frequency = frequency;
-			//_pendingMobiles = new Dictionary<Mobile, Int32>();
-			_callingMobiles = new Dictionary<Mobile,Tuple<Double,Double>>();
-			_codesArray = new Dictionary<Int32, Int32>(){
-				{1,1},
-				{2,2},
-				{3,3}
-			};
+			Antenna = new Antenna(x,y);
+			_thermalNoise = Converter.ToLinear(-99);
+			_c = 3 * Math.Pow(10, 8);
+			_frequency = _defaultFrequency;
+			CallingMobiles = new Dictionary<Mobile,Tuple<Double,Int32,Int32>>();
+			//_cellInterference = 0;
+			UMTSCodes = new UMTSCode();
 		}
 
 		// This method checks if the cell is able to accept the new call
 		// if it is, then we wait for a code to be available
  		// and return it to the mobile
-		public CallResult requestCall(Mobile m, Call.Type type)
+		public CallResult requestCall(Mobile m, Call.Type service)
 		{
-			CallResult code = CallResult.FAILURE;
+			Debug.Assert(service != Call.Type.NONE);
 
-			Double receivedPower = frissPower(m);
+			Double SIR = computeSIR(frissPower(Antenna.CurrentPower, m), m);
 
-			Double SIR = computeSIR(receivedPower, type);
+			Double requiredPower = getRequiredPower(SIR, service);
 
-			if (doAdmissionControl(receivedPower,SIR, type))
+			if (!doAdmissionControl(requiredPower, SIR, service, m.Class))
 			{
-				// The network is OK,
-				// add mobile to list and wait for code
-				_callingMobiles.Add(m, Tuple.Create<Double, Double>(receivedPower, SIR));
-				
-
-				if (_codesArray[1] > 0)
-				{
-					// There is some codes left, decrement it
-					code = CallResult.SUCCESS;
-					_codesArray[1]--;
-					// update SIR and power used
-					_antenna.CurrentPower += receivedPower;
-					_cellInterference += receivedPower;
-				}
-				else
-				{
-					// There is no code left, transmit a result to the simulator 
-					// that it should check next iterations if there are some free codes 
-					code = CallResult.PENDING;
-				}
-
+				return CallResult.FAILURE;
 			}
-			return code;
+
+			// The network is OK, check for for code
+			Int32 codeLength = Call.getCallInfos()[service].Item3;
+			Int32 position;
+
+			Boolean hasCode = UMTSCodes.requireCode(codeLength, out position);
+
+			if (UMTSCodes.requireCode(codeLength, out position))
+			{
+				// The code is attributed, the mobile can start using the cell ressources
+				CallingMobiles.Add(m, Tuple.Create<Double, Int32, Int32>(requiredPower, codeLength, position));
+				
+				// Register current mobile for calling
+				Antenna.CurrentPower += requiredPower;
+				
+				return CallResult.SUCCESS;
+				
+			}
+			else
+			{
+				// There is no code left, add to pending list to save requiredPower
+				PendingMobiles.Add(m, requiredPower);
+
+				return CallResult.PENDING;
+			}
 		}
 
-		private Double frissPower(Mobile m)
+		private Double getRequiredPower(Double SIR, Call.Type type)
 		{
-			Double distance = Math.Sqrt(Math.Pow((m.X - _antenna.X), 2) + Math.Pow((m.Y - _antenna.Y),2));
-			// Emitter and receptor Gains are 0 dB
-			Double power = m.PE - (32.44 + 20 * Math.Log10(_frequency) + 20 * Math.Log10(distance));
-			return power;
+			return Antenna.SignalingChannelPower * (Converter.ToLinear(Call.getCallInfos()[type].Item1) / SIR);
+		}
+
+		private Double frissPower(Double power, Mobile m)
+		{
+			return ((power * Antenna.Gain * m.Gain) / (Antenna.Loss * m.Loss)) * Math.Pow((_c / (2 * Math.PI * Math.Pow(m.Distance,2))), 2);
 		}
 
 		public void endCall(Mobile m, Call.Type type)
 		{
-			_cellInterference -= _callingMobiles[m].Item1;
-			_callingMobiles.Remove(m);
+			//_cellInterference -= CallingMobiles[m].Item1;
+			CallingMobiles.Remove(m);
 		}
 
-		private Boolean doAdmissionControl(Double receivedPower, Double SIR, Call.Type type)
+		private Boolean doAdmissionControl(Double requiredPower, Double computedSIR, Call.Type type, MobileClass mobileClass)
 		{
-			if (SIR < Call.getCallInfos()[type].Item1)
+			if (computedSIR < Call.getCallInfos()[type].Item1)
 			{
 				return false;
 			}
-			if (receivedPower > _antenna.MaxPower - 10)
+			if (requiredPower >= Antenna.SignalingChannelPower)
 			{
 				return false;
 			}
-			if (receivedPower + _antenna.CurrentPower >= _antenna.MaxPower)
+			if (requiredPower + Antenna.CurrentPower >= Antenna.MaxPower)
+			{
+				return false;
+			}
+			if (requiredPower > Mobile.getPower(mobileClass))
 			{
 				return false;
 			}
@@ -139,30 +137,23 @@ namespace AdmissionCallSim.SimCore
 			return AUSimulator.getOtherCellsInterferences(this);
 		}
 
-		public Double getInterference()
+		private Double computeSIR(Double recievedPower, Mobile m)
 		{
-			return _cellInterference;
+			return ((recievedPower) / (getAmbientInterference() + computeCellInterference(m) + _thermalNoise));
 		}
 
-		private Double computeSIR(Double recievedPower , Call.Type type)
+		private double computeCellInterference(Mobile m)
 		{
-			Double SIR;
-			Double SF = ((_umtsBandwidth) / (Call.getCallInfos()[type].Item2));
-			SIR = SF * ((recievedPower) / (getAmbientInterference() + _cellInterference + _thermalNoise));
-			return SIR;
-		}
+			Debug.Assert(!CallingMobiles.ContainsKey(m));
+			Debug.Assert(!Object.ReferenceEquals(CallingMobiles, null));
 
-		private Boolean checkPower(Double recievedPower)
-		{
-			if (recievedPower > _antenna.MaxPower - 10)
+			Double interference = 0;
+			foreach (Mobile mobile in CallingMobiles.Keys)
 			{
-				return false;
+				Double requiredPower = CallingMobiles[mobile].Item1;
+				interference += frissPower(requiredPower, m);
 			}
-			if (recievedPower + _antenna.CurrentPower >= _antenna.MaxPower)
-			{
-				return false;
-			}
-			return true;
+			return interference;
 		}
 	}
 }

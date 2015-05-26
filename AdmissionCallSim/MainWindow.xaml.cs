@@ -29,7 +29,7 @@ namespace AdmissionCallSim
         public ObservableCollection<PhoneInfo> phoneInfoList = new ObservableCollection<PhoneInfo>();
 		//public ObservableCollection<Antenna> antennaInfoList = new ObservableCollection<Antenna>();
         private List<Mobile> phoneList = new List<Mobile>();
-		private Cell cell = new Cell(900, 550, 350);
+		private Cell cell = new Cell(550, 350);
         
         public MainWindow()
         {
@@ -54,6 +54,8 @@ namespace AdmissionCallSim
         {
             if (draggedImage != null)
             {
+				Mobile currentMobile = draggedImage as Mobile;
+				currentMobile.Distance = AUSimulator.computeDistance(currentMobile, currentMobile.NearestCell);
                 canvas.ReleaseMouseCapture();
                 Panel.SetZIndex(draggedImage, 0);
                 draggedImage = null;

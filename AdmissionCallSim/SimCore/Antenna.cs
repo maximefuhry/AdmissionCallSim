@@ -9,35 +9,22 @@ namespace AdmissionCallSim.SimCore
 {
 	public class Antenna
 	{
-		private Double _maxPower;
-		public Double MaxPower
-		{
-			get { return _maxPower; }
-		}
+		public Double MaxPower { get; set; }
 
-		private Double _currentPower;
-		public Double CurrentPower
-		{
-			get { return _currentPower; }
-			set { _currentPower = value; }
-		}
+		public Double CurrentPower { get; set; }
 
-		// All powers in dBm
-		private readonly Double _defaultMaxPower = 53;
+		public Double Gain { get; set; }
 
-		private Double _x;
-		public Double X
-		{
-			get { return _x; }
-			set { _x = value; }
-		}
+		public Double Loss { get; set; }
 
-		private Double _y;
-		public Double Y
-		{
-			get { return _y; }
-			set { _y = value; }
-		}
+		public Double SignalingChannelPower { get; set; }
+
+		// Power in Watt
+		private readonly Double _defaultMaxPower = 0.200;
+
+		public Double X { get; set; }
+
+		public Double Y { get; set; }
 
 		//private Double _call_range;
 
@@ -48,11 +35,13 @@ namespace AdmissionCallSim.SimCore
 
 		public Antenna(Int32 x, Int32 y)
 		{
-			_x = x;
-			_y = y;
-			_maxPower = _defaultMaxPower;
-			_currentPower = 0;
+			X = x;
+			Y = y;
+			Gain = 2.5;
+			Loss = 0;
+			MaxPower = _defaultMaxPower;
+			SignalingChannelPower = MaxPower / 10;
+			CurrentPower += SignalingChannelPower;
 		}
-
 	}
 }

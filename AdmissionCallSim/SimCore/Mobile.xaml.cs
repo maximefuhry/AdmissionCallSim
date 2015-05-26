@@ -29,16 +29,16 @@ namespace AdmissionCallSim.SimCore
 		public Mobile(Int32 x, Int32 y)
 		{
 			InitializeComponent();
-			_x = x;
-			_y = y;
-			_Pe = _default_Pe;
-			_type = Call.Type.NONE;
-			_id = _nbrmobiles++;
+			X = x;
+			Y = y;
+			Gain = 1.25;
+			Type = Call.Type.NONE;
+			ID = Nbrmobiles++;
 		}
 
 		~Mobile()
 		{
-			_nbrmobiles--;
+			Nbrmobiles--;
 		}
 
 		private void openPopUp(object sender, System.Windows.Input.MouseButtonEventArgs e)

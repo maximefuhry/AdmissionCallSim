@@ -96,6 +96,8 @@ namespace AdmissionCallSim.SimCore
 
 		public static Double getOtherCellsInterferences(Cell calling){
 			Debug.Assert(!Object.ReferenceEquals(_instance, null));
+			Debug.Assert(!Object.ReferenceEquals(_cells, null));
+
 			Double interference = 0;
 			//foreach (Cell cell in _cells)
 			//{
@@ -158,12 +160,14 @@ namespace AdmissionCallSim.SimCore
 				Int32 position;
 				Cell c = m.NearestCell;
 
-				Debug.Assert(c.CallingMobiles.ContainsKey(m));
+				Debug.Assert(c.PendingMobiles.ContainsKey(m));
 
-				if (c.UMTSCodes.requireCode(Call.getCallInfos()[m.Type].Item3, out position))
+				Int32 codeLen = Call.getCallInfos()[m.Type].Item3;
+
+				if (c.UMTSCodes.requireCode(codeLen, out position))
 				{
-					// TODO update Cell interference with current mobile required power.
-					//c.PendingMobiles.Remove(m);
+					c.CallingMobiles.Add(m, Tuple.Create<Double, Int32, Int32>(c.PendingMobiles[m], codeLen, position));
+					c.PendingMobiles.Remove(m);
 					_pendingMobiles.Remove(m);
 					_callingMobiles.Add(m);
 				}
@@ -173,7 +177,7 @@ namespace AdmissionCallSim.SimCore
 					if (_pendingMobiles[m] <= 0)
 					{
 						// Time-out expired
-						c.CallingMobiles.Remove(m);
+						c.PendingMobiles.Remove(m);
 
 						// Set call length to 0 and close connection
 						m.CallLength = 0;
@@ -183,7 +187,7 @@ namespace AdmissionCallSim.SimCore
 			}
 		}
 
-		public void startMobileCall(Mobile m)
+		public static void startMobileCall(Mobile m)
 		{
 			Debug.Assert(_idleMobiles.Contains(m));
 
@@ -230,5 +234,16 @@ namespace AdmissionCallSim.SimCore
 			//}
 		}
 
-    }
+
+		public static double computeDistance(Mobile currentMobile, Cell cell)
+		{
+			Debug.Assert(!Object.ReferenceEquals(currentMobile, null));
+			Debug.Assert(!Object.ReferenceEquals(currentMobile.NearestCell, null));
+			//Debug.Assert(_cells.Contains(currentMobile.NearestCell));
+			Debug.Assert(!Object.ReferenceEquals(currentMobile.NearestCell.Antenna, null));
+
+			Antenna antenna = currentMobile.NearestCell.Antenna;
+			return Math.Sqrt(Math.Pow((currentMobile.X - antenna.X), 2) + Math.Pow((currentMobile.Y - antenna.Y), 2));
+		}
+	}
 }
