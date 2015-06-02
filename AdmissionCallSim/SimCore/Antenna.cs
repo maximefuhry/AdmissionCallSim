@@ -38,7 +38,7 @@ namespace AdmissionCallSim.SimCore
 			X = x;
 			Y = y;
 			Gain = 2.5;
-			Loss = 0;
+			Loss = 1;
 			MaxPower = _defaultMaxPower;
 			SignalingChannelPower = MaxPower / 10;
 			CurrentPower += SignalingChannelPower;

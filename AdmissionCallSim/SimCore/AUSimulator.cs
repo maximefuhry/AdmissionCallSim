@@ -24,12 +24,7 @@ namespace AdmissionCallSim.SimCore
 		
 		private static readonly Double _callingThresold = 0.2;
 
-		private static Boolean _running;
-		public static Boolean Running
-		{
-			get { return _running; }
-			set { _running = value; }
-		}
+		public static Boolean Running { get; set; }
 
 		private AUSimulator()
 		{
@@ -38,7 +33,7 @@ namespace AdmissionCallSim.SimCore
 			_idleMobiles = new List<Mobile>();
 			_pendingMobiles = new Dictionary<Mobile, Int32>();
 			_codeWaitTimeout = 100;
-			_running = true;
+			Running = true;
 		}
 
 		public static AUSimulator getInstance()
@@ -94,17 +89,17 @@ namespace AdmissionCallSim.SimCore
 			}
 		}
 
-		public static Double getOtherCellsInterferences(Cell calling){
-			Debug.Assert(!Object.ReferenceEquals(_instance, null));
-			Debug.Assert(!Object.ReferenceEquals(_cells, null));
+		public static Double getOtherCellsInterferences(Cell calling, Mobile m){
+			//Debug.Assert(!Object.ReferenceEquals(_instance, null));
+			//Debug.Assert(!Object.ReferenceEquals(_cells, null));
 
 			Double interference = 0;
-			//foreach (Cell cell in _cells)
-			//{
-			//	if(cell != calling){
-			//		interference += cell.getInterference();
-			//	}
-			//}
+			foreach (Cell cell in _cells)
+			{
+				if(cell != calling){
+					interference += cell.computeCellInterference(m);
+				}
+			}
 			return interference;
 		}
 
@@ -211,11 +206,10 @@ namespace AdmissionCallSim.SimCore
 			}
 		}
 
-		public static void run()
+		public void run()
 		{
-			Debug.Assert(!Object.ReferenceEquals(_instance, null));
 
-			while(_running)
+			while(Running)
 			{
 				_instance.runCalls();
 				_instance.updatePending();
@@ -237,13 +231,11 @@ namespace AdmissionCallSim.SimCore
 
 		public static double computeDistance(Mobile currentMobile, Cell cell)
 		{
-			Debug.Assert(!Object.ReferenceEquals(currentMobile, null));
-			Debug.Assert(!Object.ReferenceEquals(currentMobile.NearestCell, null));
-			//Debug.Assert(_cells.Contains(currentMobile.NearestCell));
-			Debug.Assert(!Object.ReferenceEquals(currentMobile.NearestCell.Antenna, null));
+			Debug.Assert(_cells.Contains(cell));
+			Debug.Assert(!Object.ReferenceEquals(cell.Antenna, null));
 
-			Antenna antenna = currentMobile.NearestCell.Antenna;
-			return Math.Sqrt(Math.Pow((currentMobile.X - antenna.X), 2) + Math.Pow((currentMobile.Y - antenna.Y), 2));
+			//Double distance = Math.Sqrt(Math.Pow(currentMobile.X - antenna.X, 2) + Math.Pow(currentMobile.Y-antenna.Y, 2));
+			return Math.Sqrt(Math.Pow((currentMobile.X - cell.Antenna.X), 2) + Math.Pow((currentMobile.Y - cell.Y), 2));
 		}
 	}
 }

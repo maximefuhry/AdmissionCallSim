@@ -30,11 +30,14 @@ namespace AdmissionCallSim
 		//public ObservableCollection<Antenna> antennaInfoList = new ObservableCollection<Antenna>();
         private List<Mobile> phoneList = new List<Mobile>();
 		private Cell cell = new Cell(550, 350);
+		private AUSimulator instance;
         
         public MainWindow()
         {
             InitializeComponent();
             DataContext = phoneInfoList;
+			instance = AUSimulator.getInstance();
+			instance.addCell(cell);
         }
 
 
@@ -74,19 +77,19 @@ namespace AdmissionCallSim
                 
                 Mobile currentMobile = draggedImage as Mobile;
 
-				// TODO : Phone number _N_ is not at index _N_ in phoneInfoList
-				//Int32 index = phoneInfoList.IndexOf(new PhoneInfo {callType = null, id = currentMobile.ID, x = currentMobile.X, y = currentMobile.Y} );
 				Int32 index = phoneInfoList.IndexOf(phoneInfoList.Where(ph => (ph.id).Equals(currentMobile.ID)).FirstOrDefault());
 
                 if (Canvas.GetLeft(draggedImage) + offset.X + draggedImage.Width < canvas.ActualWidth && Canvas.GetLeft(draggedImage) + offset.X > 0)
                 {
                     Canvas.SetLeft(draggedImage, Canvas.GetLeft(draggedImage) + offset.X);
                     phoneInfoList[index].x = Canvas.GetLeft(draggedImage) + offset.X;
+					currentMobile.X = Convert.ToInt32(Canvas.GetLeft(draggedImage) + offset.X);
                 }
                 if (Canvas.GetTop(draggedImage) + offset.Y + draggedImage.Height < canvas.ActualHeight && Canvas.GetTop(draggedImage) + offset.Y > 0)
                 {
                     Canvas.SetTop(draggedImage, Canvas.GetTop(draggedImage) + offset.Y);
                     phoneInfoList[index].y = Canvas.GetTop(draggedImage) + offset.Y;
+					currentMobile.Y = Convert.ToInt32(Canvas.GetTop(draggedImage) + offset.Y);
                 }
                 phoneDataGrid.Items.Refresh();
             }
@@ -113,6 +116,4 @@ namespace AdmissionCallSim
         }
 
     }
-
-   
 }

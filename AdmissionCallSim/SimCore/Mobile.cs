@@ -34,8 +34,8 @@ namespace AdmissionCallSim.SimCore
 
 		public CallResult startCall(Call.Type t, Int32 length)
 		{
-			//CallResult result = _nearestCell.requestCall(this, t);
-			CallResult result = CallResult.FAILURE;
+			CallResult result = NearestCell.requestCall(this, t);
+			//CallResult result = CallResult.FAILURE;
 			if (result != CallResult.FAILURE)
 			{
 				// call request succeded
@@ -62,11 +62,11 @@ namespace AdmissionCallSim.SimCore
 			switch (mobileClass)
 			{
 				case MobileClass.LOW:
-					return 0;
+					return 125 * Math.Pow(10, -3);
 				case MobileClass.HIGH:
-					return 0;
+					return 250 * Math.Pow(10, -3);
 				case MobileClass.MEDIUM:
-					return 0;
+					return 500 * Math.Pow(10, -3);
 				default:
 					return Double.MinValue;
 			}

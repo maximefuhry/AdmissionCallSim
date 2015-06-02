@@ -13,7 +13,7 @@ namespace AdmissionCallSim.SimCore
 	
 		private Int32 _frequency;
 
-		private Int32 _defaultFrequency = 2100;
+		private Int32 _defaultFrequency = (Int32)(2100 * Math.Pow(10,6));
 
 		//private Double _cellInterference;
 
@@ -45,7 +45,7 @@ namespace AdmissionCallSim.SimCore
 		public Cell(Int32 x, Int32 y)
 		{
 			Antenna = new Antenna(x,y);
-			_thermalNoise = Converter.ToLinear(-99);
+			_thermalNoise = Converter.ToLinear(-129);
 			_c = 3 * Math.Pow(10, 8);
 			_frequency = _defaultFrequency;
 			CallingMobiles = new Dictionary<Mobile,Tuple<Double,Int32,Int32>>();
@@ -60,7 +60,7 @@ namespace AdmissionCallSim.SimCore
 		{
 			Debug.Assert(service != Call.Type.NONE);
 
-			Double SIR = computeSIR(frissPower(Antenna.CurrentPower, m), m);
+			Double SIR = computeSIR(frissPower(Antenna.SignalingChannelPower, m), m);
 
 			Double requiredPower = getRequiredPower(SIR, service);
 
@@ -97,23 +97,28 @@ namespace AdmissionCallSim.SimCore
 
 		private Double getRequiredPower(Double SIR, Call.Type type)
 		{
+			//Double p = Antenna.SignalingChannelPower * (Converter.ToLinear(Call.getCallInfos()[type].Item1) / SIR);
 			return Antenna.SignalingChannelPower * (Converter.ToLinear(Call.getCallInfos()[type].Item1) / SIR);
 		}
 
 		private Double frissPower(Double power, Mobile m)
 		{
-			return ((power * Antenna.Gain * m.Gain) / (Antenna.Loss * m.Loss)) * Math.Pow((_c / (2 * Math.PI * Math.Pow(m.Distance,2))), 2);
+			//Double p = ((power * Antenna.Gain * m.Gain) / (Antenna.Loss * m.Loss)) * Math.Pow((_c / (2 * Math.PI * _frequency * Math.Pow(m.Distance, 2))), 2);
+			//Double p2 = ((power * Antenna.Gain * m.Gain) / (Antenna.Loss * m.Loss));
+			//Double p3 = Math.Pow((_c / (2 * Math.PI * _frequency * Math.Pow(m.Distance, 2))), 2);
+			return ((power * Antenna.Gain * m.Gain) / (Antenna.Loss * m.Loss)) * Math.Pow((_c / (2 * Math.PI * _frequency * Math.Pow(m.Distance,2))), 2);
 		}
 
 		public void endCall(Mobile m, Call.Type type)
 		{
-			//_cellInterference -= CallingMobiles[m].Item1;
+			Antenna.CurrentPower -= CallingMobiles[m].Item1;
+			UMTSCodes.freeCode(CallingMobiles[m].Item2, CallingMobiles[m].Item3);
 			CallingMobiles.Remove(m);
 		}
 
 		private Boolean doAdmissionControl(Double requiredPower, Double computedSIR, Call.Type type, MobileClass mobileClass)
 		{
-			if (computedSIR < Call.getCallInfos()[type].Item1)
+			 if (computedSIR < Call.getCallInfos()[type].Item1)
 			{
 				return false;
 			}
@@ -132,17 +137,18 @@ namespace AdmissionCallSim.SimCore
 			return true;
 		}
 
-		private Double getAmbientInterference()
+		private Double getAmbientInterference(Mobile m)
 		{
-			return AUSimulator.getOtherCellsInterferences(this);
+			return AUSimulator.getOtherCellsInterferences(this, m);
 		}
 
 		private Double computeSIR(Double recievedPower, Mobile m)
 		{
-			return ((recievedPower) / (getAmbientInterference() + computeCellInterference(m) + _thermalNoise));
+			//Double SIR = ((recievedPower) / (getAmbientInterference() + computeCellInterference(m) + recievedPower + _thermalNoise));
+			return ((recievedPower) / (getAmbientInterference(m) + computeCellInterference(m) + recievedPower + _thermalNoise));
 		}
 
-		private double computeCellInterference(Mobile m)
+		public double computeCellInterference(Mobile m)
 		{
 			Debug.Assert(!CallingMobiles.ContainsKey(m));
 			Debug.Assert(!Object.ReferenceEquals(CallingMobiles, null));

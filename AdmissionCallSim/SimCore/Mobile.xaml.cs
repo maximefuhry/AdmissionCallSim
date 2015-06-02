@@ -34,6 +34,8 @@ namespace AdmissionCallSim.SimCore
 			Gain = 1.25;
 			Type = Call.Type.NONE;
 			ID = Nbrmobiles++;
+			Class = MobileClass.LOW;
+			Loss = 1;
 		}
 
 		~Mobile()
@@ -55,7 +57,7 @@ namespace AdmissionCallSim.SimCore
 				{
 					MenuItem mi = new MenuItem
 					{
-						Header = t.ToString()
+						Header = t
 					};
 					mi.Click += call;
 					menu.Items.Add(mi);
@@ -76,9 +78,9 @@ namespace AdmissionCallSim.SimCore
 		private void call(object sender, EventArgs e)
 		{
 			MenuItem mi = sender as MenuItem;
-			MessageBox.Show(mi.Header.ToString());
-			if(mi.Header.Equals(Call.Type.VOICE.ToString())){
-				CallResult call_result  = startCall(Call.Type.VOICE, 50);
+			//MessageBox.Show(mi.Header.ToString());
+			if(mi.Header.Equals(Call.Type.VOICE)){
+				CallResult call_result  = startCall((Call.Type) mi.Header, 50);
 				switch(call_result)
 				{
 					case CallResult.FAILURE: MessageBox.Show("Call rejected"); break;

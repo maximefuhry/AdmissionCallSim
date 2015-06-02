@@ -20,8 +20,9 @@ namespace AdmissionCallSim.SimCore
 
 		public UMTSCode()
 		{
+			// The CPICH channel requires the code 256-1, so we reserve it at instanciationss
 			_array = new Byte[64] {
-				0, 0, 0, 0, 0, 0, 0, 0,
+				192, 0, 0, 0, 0, 0, 0, 0,
  				0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0,
