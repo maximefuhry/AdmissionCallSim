@@ -3,37 +3,41 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AdmissionCallSim.SimCore
 {
     public class AUSimulator
     {
-		private static List<Cell> _cells;
+		private List<Cell> _cells;
 
 		// List for waiting mobiles, with timeout value
-		private static Dictionary<Mobile, Int32> _pendingMobiles;
+		private Dictionary<Mobile, Int32> _pendingMobiles;
 
-		private static Int32 _codeWaitTimeout;
+		private readonly Int32 _codeWaitTimeout = 10;
 
-		private static List<Mobile> _callingMobiles;
+		public List<Mobile> AllMobiles { get; private set; }
 
-		private static List<Mobile> _idleMobiles;
+		private List<Mobile> _callingMobiles;
+
+		public static List<Mobile> IdleMobiles;
 
 		private static AUSimulator _instance;
 		
 		private static readonly Double _callingThresold = 0.2;
 
-		public static Boolean Running { get; set; }
+		public Boolean Running { get; set; }
 
 		private AUSimulator()
 		{
 			_cells = new List<Cell>();
+			AllMobiles = new List<Mobile>();
 			_callingMobiles = new List<Mobile>();
-			_idleMobiles = new List<Mobile>();
+			IdleMobiles = new List<Mobile>();
 			_pendingMobiles = new Dictionary<Mobile, Int32>();
-			_codeWaitTimeout = 100;
-			Running = true;
+			//_codeWaitTimeout = 15;
+			//Running = true;
 		}
 
 		public static AUSimulator getInstance()
@@ -47,7 +51,8 @@ namespace AdmissionCallSim.SimCore
 
 		public void addMobile(Mobile m)
 		{
-			_idleMobiles.Add(m);
+			AllMobiles.Add(m);
+			IdleMobiles.Add(m);
 			setNearestCell(m);
 		}
 
@@ -55,11 +60,12 @@ namespace AdmissionCallSim.SimCore
 		{
 			if (_callingMobiles.Contains(m) || _pendingMobiles.ContainsKey(m))
 			{
-				throw new Exception("Le mobile ne peut pas être supprimé en cours d'appel");
+				throw new InvalidOperationException("Le mobile ne peut pas être supprimé en cours d'appel");
 			}
-			else if (_idleMobiles.Contains(m))
+			else if (IdleMobiles.Contains(m))
 			{
-				_idleMobiles.Remove(m);
+				AllMobiles.Remove(m);
+				IdleMobiles.Remove(m);
 			}
 		}
 
@@ -72,20 +78,26 @@ namespace AdmissionCallSim.SimCore
 		{
 			if (c.CallingMobiles.Count != 0)
 			{
-				throw new Exception("Cell must be unused before deletion");
+				throw new InvalidOperationException("Cell must be unused before deletion");
 			}
 			_cells.Remove(c);
 		}
 
 		private void runCalls(){
-			foreach(Mobile m in _callingMobiles){
+			List<Mobile> toRemove = new List<Mobile>();
+			foreach(Mobile m in _callingMobiles)
+			{
 				m.runCall();
 				if (m.CallLength == 0)
 				{
 					m.endCall();
-					_callingMobiles.Remove(m);
-					_idleMobiles.Add(m);
+					toRemove.Add(m);
+					IdleMobiles.Add(m);
 				}
+			}
+			foreach (Mobile m in toRemove)
+			{
+				_callingMobiles.Remove(m);
 			}
 		}
 
@@ -94,7 +106,7 @@ namespace AdmissionCallSim.SimCore
 			//Debug.Assert(!Object.ReferenceEquals(_cells, null));
 
 			Double interference = 0;
-			foreach (Cell cell in _cells)
+			foreach (Cell cell in _instance._cells)
 			{
 				if(cell != calling){
 					interference += cell.computeCellInterference(m);
@@ -121,26 +133,11 @@ namespace AdmissionCallSim.SimCore
 		private void provokeRandomCalls()
 		{
 			Random RNG = new Random(DateTime.Now.Millisecond);
-			foreach (Mobile m in _idleMobiles)
+			foreach (Mobile m in IdleMobiles)
 			{
 				if (RNG.NextDouble() <= _callingThresold)
 				{
-					Int32 rndCallLength = RNG.Next(_codeWaitTimeout - (_codeWaitTimeout / 4), _codeWaitTimeout + (_codeWaitTimeout / 4));
-					CallResult result = m.startCall((Call.Type) RNG.Next(1, 4), rndCallLength);
-					switch (result)
-					{
-						case CallResult.PENDING:
-							_idleMobiles.Remove(m);
-							_pendingMobiles.Add(m, _codeWaitTimeout);
-							break;
-						case CallResult.SUCCESS:
-							_idleMobiles.Remove(m);
-							_callingMobiles.Add(m);
-							break;
-						case CallResult.FAILURE:
-						default:
-							break;
-					}
+					startMobileCall(m, (Call.Type) RNG.Next(1,4));					
 				}
 			}
 		}
@@ -149,6 +146,7 @@ namespace AdmissionCallSim.SimCore
 		// of the simulation the pending mobiles
 		private void updatePending()
 		{
+			List<Mobile> toRemove = new List<Mobile>();
 			//Dictionary<Mobile, Int32> pendingmobiles = c.PendingMobiles;
 			foreach (Mobile m in _pendingMobiles.Keys)
 			{
@@ -163,7 +161,7 @@ namespace AdmissionCallSim.SimCore
 				{
 					c.CallingMobiles.Add(m, Tuple.Create<Double, Int32, Int32>(c.PendingMobiles[m], codeLen, position));
 					c.PendingMobiles.Remove(m);
-					_pendingMobiles.Remove(m);
+					toRemove.Add(m);
 					_callingMobiles.Add(m);
 				}
 				else
@@ -173,36 +171,34 @@ namespace AdmissionCallSim.SimCore
 					{
 						// Time-out expired
 						c.PendingMobiles.Remove(m);
+						toRemove.Add(m);
+						IdleMobiles.Add(m);
 
 						// Set call length to 0 and close connection
 						m.CallLength = 0;
-						m.endCall();
+						m.endCall(false);
 					}
 				}
 			}
 		}
 
-		public static void startMobileCall(Mobile m)
+		public static void startMobileCall(Mobile m, Call.Type service)
 		{
-			Debug.Assert(_idleMobiles.Contains(m));
+			Debug.Assert(IdleMobiles.Contains(m));
 
-			Random RNG = new Random(DateTime.Now.Millisecond);
-			Int32 callLen = RNG.Next(_codeWaitTimeout - (_codeWaitTimeout / 4), _codeWaitTimeout + (_codeWaitTimeout / 4));
-			CallResult res = m.startCall((Call.Type)RNG.Next(1, 4), callLen);
-			switch (res)
+			switch (m.startCall(service, new Random(DateTime.Now.Millisecond).Next(_instance._codeWaitTimeout - (_instance._codeWaitTimeout / 4), _instance._codeWaitTimeout + (_instance._codeWaitTimeout / 4))))
 			{
 				case CallResult.PENDING:
-					_idleMobiles.Remove(m);
-					_pendingMobiles.Add(m, _codeWaitTimeout);
+					IdleMobiles.Remove(m);
+					_instance._pendingMobiles.Add(m, _instance._codeWaitTimeout);
 					break;
 				case CallResult.SUCCESS:
-					_idleMobiles.Remove(m);
-					_callingMobiles.Add(m);
+					IdleMobiles.Remove(m);
+					_instance._callingMobiles.Add(m);
 					break;
 				case CallResult.FAILURE:
 				default:
 					break;
-
 			}
 		}
 
@@ -211,9 +207,10 @@ namespace AdmissionCallSim.SimCore
 
 			while(Running)
 			{
-				_instance.runCalls();
-				_instance.updatePending();
-				_instance.provokeRandomCalls();
+				runCalls();
+				updatePending();
+				//provokeRandomCalls();
+				Thread.Sleep(5000);
 			}
 			
 			// Model safety : all calling mobiles (triggered by simulator or GUI) 
@@ -231,11 +228,11 @@ namespace AdmissionCallSim.SimCore
 
 		public static double computeDistance(Mobile currentMobile, Cell cell)
 		{
-			Debug.Assert(_cells.Contains(cell));
+			Debug.Assert(_instance._cells.Contains(cell));
 			Debug.Assert(!Object.ReferenceEquals(cell.Antenna, null));
 
 			//Double distance = Math.Sqrt(Math.Pow(currentMobile.X - antenna.X, 2) + Math.Pow(currentMobile.Y-antenna.Y, 2));
-			return Math.Sqrt(Math.Pow((currentMobile.X - cell.Antenna.X), 2) + Math.Pow((currentMobile.Y - cell.Y), 2));
+			return Math.Sqrt(Math.Pow((currentMobile.X - cell.Antenna.X), 2) + Math.Pow((currentMobile.Y - cell.Antenna.Y), 2));
 		}
 	}
 }

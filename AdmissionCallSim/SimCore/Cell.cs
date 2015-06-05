@@ -73,7 +73,7 @@ namespace AdmissionCallSim.SimCore
 			Int32 codeLength = Call.getCallInfos()[service].Item3;
 			Int32 position;
 
-			Boolean hasCode = UMTSCodes.requireCode(codeLength, out position);
+			//Boolean hasCode = UMTSCodes.requireCode(codeLength, out position);
 
 			if (UMTSCodes.requireCode(codeLength, out position))
 			{
@@ -97,19 +97,15 @@ namespace AdmissionCallSim.SimCore
 
 		private Double getRequiredPower(Double SIR, Call.Type type)
 		{
-			//Double p = Antenna.SignalingChannelPower * (Converter.ToLinear(Call.getCallInfos()[type].Item1) / SIR);
 			return Antenna.SignalingChannelPower * (Converter.ToLinear(Call.getCallInfos()[type].Item1) / SIR);
 		}
 
 		private Double frissPower(Double power, Mobile m)
 		{
-			//Double p = ((power * Antenna.Gain * m.Gain) / (Antenna.Loss * m.Loss)) * Math.Pow((_c / (2 * Math.PI * _frequency * Math.Pow(m.Distance, 2))), 2);
-			//Double p2 = ((power * Antenna.Gain * m.Gain) / (Antenna.Loss * m.Loss));
-			//Double p3 = Math.Pow((_c / (2 * Math.PI * _frequency * Math.Pow(m.Distance, 2))), 2);
 			return ((power * Antenna.Gain * m.Gain) / (Antenna.Loss * m.Loss)) * Math.Pow((_c / (2 * Math.PI * _frequency * Math.Pow(m.Distance,2))), 2);
 		}
 
-		public void endCall(Mobile m, Call.Type type)
+		public void endCall(Mobile m)
 		{
 			Antenna.CurrentPower -= CallingMobiles[m].Item1;
 			UMTSCodes.freeCode(CallingMobiles[m].Item2, CallingMobiles[m].Item3);
@@ -150,7 +146,7 @@ namespace AdmissionCallSim.SimCore
 
 		public double computeCellInterference(Mobile m)
 		{
-			Debug.Assert(!CallingMobiles.ContainsKey(m));
+			//Debug.Assert(!CallingMobiles.ContainsKey(m));
 			Debug.Assert(!Object.ReferenceEquals(CallingMobiles, null));
 
 			Double interference = 0;

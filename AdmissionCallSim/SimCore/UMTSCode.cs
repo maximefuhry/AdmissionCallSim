@@ -22,7 +22,7 @@ namespace AdmissionCallSim.SimCore
 		{
 			// The CPICH channel requires the code 256-1, so we reserve it at instanciationss
 			_array = new Byte[64] {
-				192, 0, 0, 0, 0, 0, 0, 0,
+				3, 0, 0, 0, 0, 0, 0, 0,
  				0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0,
@@ -81,7 +81,7 @@ namespace AdmissionCallSim.SimCore
 			// Parameter Checking
 			Debug.Assert(position >= 0 && position < 512);
 			Debug.Assert(position + numberOfBits <= 512);
-			Debug.Assert(isPowerOfTwo(position));
+			Debug.Assert(position % 2 == 0);
 
 			// get first concerned byte in array
 			Byte byte_index = (Byte)(position / _byteSize);
@@ -105,7 +105,7 @@ namespace AdmissionCallSim.SimCore
 		private void freeBits(UInt32 numberOfBits, Int32 position)
 		{
 			// Parameter Checking
-			Debug.Assert(isPowerOfTwo(position));
+			Debug.Assert(position % 2 == 0);
 			Debug.Assert(position >= 0 && position < 512);
 			Debug.Assert(position + numberOfBits <= 512);
 

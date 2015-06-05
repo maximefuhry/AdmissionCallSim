@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
+using System.Threading;
 using AdmissionCallSim.SimCore;
 
 namespace AdmissionCallSim
@@ -31,14 +32,31 @@ namespace AdmissionCallSim
         private List<Mobile> phoneList = new List<Mobile>();
 		private Cell cell = new Cell(550, 350);
 		private AUSimulator instance;
+		private Thread simulatorThread = null;
+		private static MainWindow _this;
         
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = phoneInfoList;
+			_this = this;
 			instance = AUSimulator.getInstance();
 			instance.addCell(cell);
+			//simulatorThread = new Thread(instance.run);
+			DataContext = phoneInfoList;
         }
+
+		public void stopSimulator()
+		{
+			instance.Running = false;
+			simulatorThread.Join();
+		}
+
+		public void startSimulator()
+		{
+			instance.Running = true;
+			simulatorThread = new Thread(instance.run);
+			simulatorThread.Start();
+		}
 
 
         private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -98,9 +116,10 @@ namespace AdmissionCallSim
         private void addPhone(object sender, RoutedEventArgs e)
         {
 			Mobile m = new Mobile();
-			m.NearestCell = cell;
+			//m.NearestCell = cell;
             phoneList.Add(m);
-            phoneInfoList.Add(new PhoneInfo { id = m.ID, x = m.X, y = m.Y });
+			instance.addMobile(m);
+            phoneInfoList.Add(new PhoneInfo { id = m.ID, x = m.X, y = m.Y, call_length = 0 });
 
             canvas.Children.Insert(numberOfAntena, phoneList.Last());
             Canvas.SetLeft(phoneList.Last(), 0);
@@ -110,10 +129,40 @@ namespace AdmissionCallSim
 
         private void removePhone(object sender, RoutedEventArgs e)
         {
-			canvas.Children.Remove(phoneList.Last());
-			phoneList.Remove(phoneList.Last());
-			phoneInfoList.Remove(phoneInfoList.Last());
+			try
+			{
+				instance.removeMobile(phoneList.Last());
+				canvas.Children.Remove(phoneList.Last());
+				phoneList.Remove(phoneList.Last());
+				phoneInfoList.Remove(phoneInfoList.Last());
+			}
+			catch(InvalidOperationException ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
         }
 
+		private void Btn_StartSimu_Click(object sender, RoutedEventArgs e)
+		{
+			if (simulatorThread == null)
+			{
+				startSimulator();
+			}
+		}
+
+		private void Btn_StopSimu_Click(object sender, RoutedEventArgs e)
+		{
+			stopSimulator();
+			simulatorThread = null;
+		}
+
+		public static void updateDataGrid(){
+			_this.phoneDataGrid.Items.Refresh();
+		}
+
+		public static ObservableCollection<PhoneInfo> getPhoneInfoList()
+		{
+			return _this.phoneInfoList;
+		}
     }
 }

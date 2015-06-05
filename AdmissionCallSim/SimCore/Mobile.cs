@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,6 +42,11 @@ namespace AdmissionCallSim.SimCore
 				// call request succeded
 				CallLength = length;
 				Type = t;
+				
+
+				MainWindow.getPhoneInfoList()[ID].callType = t;
+				MainWindow.getPhoneInfoList()[ID].call_length = length;
+				//MainWindow.updateDataGrid();
 			}
 			return result;
 		}
@@ -48,13 +54,19 @@ namespace AdmissionCallSim.SimCore
 		public void runCall()
 		{
 			CallLength--;
+			MainWindow.getPhoneInfoList()[ID].call_length--;
+			//MainWindow.updateDataGrid();
 		}
-
-		public void endCall()
+		 
+		public void endCall(Boolean calling=true)
 		{
-			NearestCell.endCall(this, Type);
+			if(calling)
+			{
+				NearestCell.endCall(this);
+			}
 			// Call length is already 0 if we step into here
-			Type = Call.Type.NONE;
+			MainWindow.getPhoneInfoList()[ID].callType = Call.Type.NONE;
+			//MainWindow.updateDataGrid();
 		}
 
 		public static Double getPower(MobileClass mobileClass)

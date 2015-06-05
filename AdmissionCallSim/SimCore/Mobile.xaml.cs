@@ -57,7 +57,8 @@ namespace AdmissionCallSim.SimCore
 				{
 					MenuItem mi = new MenuItem
 					{
-						Header = t
+						Header = t,
+						IsEnabled = CallLength > 0 ? false : true
 					};
 					mi.Click += call;
 					menu.Items.Add(mi);
@@ -77,41 +78,7 @@ namespace AdmissionCallSim.SimCore
 
 		private void call(object sender, EventArgs e)
 		{
-			MenuItem mi = sender as MenuItem;
-			//MessageBox.Show(mi.Header.ToString());
-			if(mi.Header.Equals(Call.Type.VOICE)){
-				CallResult call_result  = startCall((Call.Type) mi.Header, 50);
-				switch(call_result)
-				{
-					case CallResult.FAILURE: MessageBox.Show("Call rejected"); break;
-					case CallResult.PENDING: MessageBox.Show("Call pending"); break;
-					case CallResult.SUCCESS: MessageBox.Show("Call accepted"); break;
-					default: break;
-				}
-			}
-			else if (mi.Header.Equals(Call.Type.DATA_BAND_L.ToString()))
-			{
-				MessageBox.Show("MESSAGE");
-			}
-			else if (mi.Header.Equals(Call.Type.DATA_BAND_H.ToString()))
-			{
-				MessageBox.Show("STREAMING");
-			}
-			else if (mi.Header.Equals(Call.Type.NONE.ToString()))
-			{
-				MessageBox.Show("UNKNOWN");
-			}
-			else
-			{
-				MessageBox.Show("UNKNOWN");
-			}
-		}
-
-		private void test(object sender, EventArgs e)
-		{
-			AUSimulator simulator = AUSimulator.getInstance();
-			simulator.addMobile(this);
-			//simulator.provokeRandomCalls();  => Is now private
+			AUSimulator.startMobileCall(this, (Call.Type) (sender as MenuItem).Header);
 		}
 	}
 }

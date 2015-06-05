@@ -11,9 +11,9 @@ namespace AdmissionCallSim.SimCore
 		public enum Type
 		{
 			NONE = 0,
-			VOICE,
-			DATA_BAND_L,
-			DATA_BAND_H,
+			VOICE = 1,
+			DATA_BAND_L = 2,
+			DATA_BAND_H =3
 		}
 
 		// Call types stored as 
