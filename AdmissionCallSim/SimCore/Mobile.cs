@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace AdmissionCallSim.SimCore
 {
@@ -42,11 +43,11 @@ namespace AdmissionCallSim.SimCore
 				// call request succeded
 				CallLength = length;
 				Type = t;
-				
 
-				MainWindow.getPhoneInfoList()[ID].callType = t;
+				MainWindow.toggleColor(this);
+				MainWindow.getPhoneInfoList()[ID].Type = t;
 				MainWindow.getPhoneInfoList()[ID].call_length = length;
-				//MainWindow.updateDataGrid();
+				MainWindow.updateDataGrid();
 			}
 			return result;
 		}
@@ -64,9 +65,8 @@ namespace AdmissionCallSim.SimCore
 			{
 				NearestCell.endCall(this);
 			}
-			// Call length is already 0 if we step into here
-			MainWindow.getPhoneInfoList()[ID].callType = Call.Type.NONE;
-			//MainWindow.updateDataGrid();
+			MainWindow.toggleColor(this);
+			MainWindow.getPhoneInfoList()[ID].Type = Call.Type.NONE;
 		}
 
 		public static Double getPower(MobileClass mobileClass)

@@ -164,5 +164,13 @@ namespace AdmissionCallSim
 		{
 			return _this.phoneInfoList;
 		}
+
+		public static void toggleColor(Mobile m)
+		{
+			//Mobile m = _this.
+			Color currentColor = m.previousColor;
+			m.previousColor = m.phoneLedGrad2.Color;
+			m.phoneLedGrad2.Color = currentColor;
+		}
     }
 }

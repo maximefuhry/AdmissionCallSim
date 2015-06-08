@@ -13,7 +13,7 @@ namespace AdmissionCallSim
         public int id { set; get; }
         public double x { set; get; }
         public double y { set; get; }
-        public ObservableCollection<Call.Type> callType { set; get; }
-
+        public Call.Type Type { set; get; }
+		public Int32 call_length { set; get; }
     }
 }

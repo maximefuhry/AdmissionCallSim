@@ -20,6 +20,8 @@ namespace AdmissionCallSim.SimCore
 	/// </summary>
 	public partial class Mobile : UserControl
 	{
+		public Color previousColor { get; set; }
+
 		public Mobile()
 			: this(0, 0)
 		{
@@ -36,6 +38,8 @@ namespace AdmissionCallSim.SimCore
 			ID = Nbrmobiles++;
 			Class = MobileClass.LOW;
 			Loss = 1;
+			previousColor = Color.FromArgb(255, 66, 201, 45);
+			tBlockID.Text = ID.ToString();
 		}
 
 		~Mobile()
@@ -79,6 +83,14 @@ namespace AdmissionCallSim.SimCore
 		private void call(object sender, EventArgs e)
 		{
 			AUSimulator.startMobileCall(this, (Call.Type) (sender as MenuItem).Header);
+		}
+
+		private void callEvent(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			Color currentColor = previousColor;
+			previousColor = phoneLedGrad2.Color;
+			phoneLedGrad2.Color = currentColor;
+			//phoneLedGrad2.Color = Color.FromArgb(25, 80, 90, 0);
 		}
 	}
 }
